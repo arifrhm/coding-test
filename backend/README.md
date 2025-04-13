@@ -1,20 +1,22 @@
 # Sales Dashboard API
 
-A FastAPI-based backend service for the Sales Dashboard application, featuring AI-powered analytics using LangChain and Meta's Llama model.
+A FastAPI-based backend service for the Sales Dashboard application, featuring AI-powered analytics using Groq API.
 
 ## Features
 
 - RESTful API endpoints for sales data
-- AI-powered analytics using LangChain and Llama
+- AI-powered analytics using Groq API
+- Async HTTP requests with aiohttp
 - CORS support for frontend integration
 - Environment-based configuration
 - Comprehensive error handling
+- Type-safe API responses
 
 ## Prerequisites
 
-- Python 3.11+
+- Python 3.8+
 - pip (Python package manager)
-- Meta Llama model file (llama-2-7b-chat.Q4_K_M.gguf)
+- Groq API key
 
 ## Installation
 
@@ -29,18 +31,21 @@ A FastAPI-based backend service for the Sales Dashboard application, featuring A
    pip install -r requirements.txt
    ```
 
-3. Download the Llama model:
-   - Download the llama-2-7b-chat.Q4_K_M.gguf model file
-   - Place it in the `models` directory
-   - Ensure the path matches the one in `.env` file
-
-4. Configure environment variables:
+3. Configure environment variables:
    - Copy `.env.example` to `.env`
    - Update the variables as needed:
      ```
-     LLAMA_MODEL_PATH=models/llama-2-7b-chat.Q4_K_M.gguf
+     # API Configuration
      API_HOST=0.0.0.0
      API_PORT=8000
+
+     # Environment
+     ENVIRONMENT=development
+
+     # Groq API Configuration
+     GROQ_API_KEY=your_groq_api_key
+     GROQ_API_URL=https://api.groq.com/openai/v1/chat/completions
+     GROQ_MODEL_NAME=meta-llama/llama-4-scout-17b-16e-instruct
      ```
 
 ## API Endpoints
@@ -49,21 +54,25 @@ A FastAPI-based backend service for the Sales Dashboard application, featuring A
 
 - `GET /api/sales-reps`
   - Returns all sales representatives data
+  - Response: `{"salesReps": [...]}`
 
 - `GET /api/sales-reps/{rep_id}`
   - Returns data for a specific sales representative
+  - Response: `{"id": 1, "name": "...", ...}`
 
 ### Deals
 
 - `GET /api/deals`
   - Returns all deals across all sales representatives
+  - Response: `{"deals": [...]}`
 
 ### AI Assistant
 
 - `POST /api/ai`
   - Accepts questions about sales data
-  - Returns AI-generated responses
+  - Returns AI-generated responses using Groq API
   - Request body: `{"question": "your question here"}`
+  - Response: `{"answer": "AI response here"}`
 
 ## Running the Application
 
@@ -87,7 +96,7 @@ backend/
 ├── main.py              # Main application file
 ├── requirements.txt     # Python dependencies
 ├── .env                # Environment variables
-├── models/             # Llama model directory
+├── .env.example        # Example environment variables
 └── dummyData.json      # Sample sales data
 ```
 
@@ -97,13 +106,25 @@ backend/
 2. Update the requirements.txt if new dependencies are needed
 3. Test the endpoints using the Swagger UI
 
-## Error Handling
+### Error Handling
 
 The API includes comprehensive error handling for:
 - Invalid requests
 - Missing resources
-- AI model initialization failures
+- API configuration errors
+- Groq API errors
 - JSON parsing errors
+
+## API Response Format
+
+All API responses follow a consistent format:
+```json
+{
+  "data": {...},  // Response data
+  "error": null,  // Error message if any
+  "status": 200   // HTTP status code
+}
+```
 
 ## Contributing
 
